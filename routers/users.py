@@ -22,7 +22,7 @@ from database import get_db
 from models import SysUser, SysUserRole, SysRole
 from schemas import ApiResponse
 from auth import hash_password
-from dependencies import get_current_user
+from dependencies import get_current_user, require_permission
 
 
 # 创建用户管理路由器
@@ -58,6 +58,7 @@ def get_user_list(
     page_size: int = Query(10, ge=1, le=100),
     keyword: Optional[str] = Query(None, description="搜索关键词"),
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("user:list")),
     db: Session = Depends(get_db)
 ):
     """查询用户列表，支持按用户名、姓名搜索"""
@@ -152,9 +153,14 @@ def update_user_status(
     user_id: int,
     data: StatusUpdate,
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("user:manage")),
     db: Session = Depends(get_db)
 ):
-    """修改用户的启用/禁用状态"""
+    """修改用户的启用/禁用状态（需要 user:manage 权限）"""
+    # 禁止禁用自己
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="不能禁用自己的账号")
+
     user = db.query(SysUser).filter(SysUser.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
@@ -177,6 +183,7 @@ def reset_user_password(
     user_id: int,
     data: PasswordReset,
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("user:manage")),
     db: Session = Depends(get_db)
 ):
     """重置用户密码（新密码使用 bcrypt 加密存储）"""
@@ -221,6 +228,7 @@ def assign_user_roles(
     user_id: int,
     data: RoleAssign,
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("user:manage")),
     db: Session = Depends(get_db)
 ):
     """

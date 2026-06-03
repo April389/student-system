@@ -209,6 +209,7 @@ def get_student_detail(
 def create_student(
     student_data: StudentCreate,   # Pydantic 自动校验数据格式
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("student:create")),
     db: Session = Depends(get_db)
 ):
     """
@@ -301,6 +302,7 @@ def update_student(
     student_id: int,
     student_data: StudentUpdate,   # Pydantic 校验，所有字段可选
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("student:update")),
     db: Session = Depends(get_db)
 ):
     """
@@ -357,6 +359,7 @@ def update_student(
 def delete_student(
     student_id: int,
     current_user: SysUser = Depends(get_current_user),
+    _: bool = Depends(require_permission("student:delete")),
     db: Session = Depends(get_db)
 ):
     """

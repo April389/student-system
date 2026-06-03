@@ -605,12 +605,22 @@ async function loadUsers() {
             return;
         }
 
+        // 获取当前登录用户信息
+        const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
+
         let html = '';
         data.data.forEach(u => {
             const statusText = u.status === 1 ? '正常' : '已禁用';
             const statusClass = u.status === 1 ? 'style="color:#52c41a"' : 'style="color:#e74c3c"';
             const toggleText = u.status === 1 ? '禁用' : '启用';
             const roles = (u.roles || []).join(', ') || '未分配';
+
+            // 当前用户不能禁用自己，隐藏操作按钮
+            const isCurrentUser = (u.id === currentUserId);
+            const operationHtml = isCurrentUser
+                ? '<span style="color:#999">当前登录用户</span>'
+                : `<button class="btn btn-small btn-default" onclick="handleToggleUserStatus(${u.id}, ${u.status === 1 ? 0 : 1})">${toggleText}</button>
+                   <button class="btn btn-small btn-danger" onclick="handleResetPassword(${u.id}, '${u.username}')">重置密码</button>`;
 
             html += `
                 <tr>
@@ -621,10 +631,7 @@ async function loadUsers() {
                     <td>${u.phone || '-'}</td>
                     <td>${roles}</td>
                     <td ${statusClass}>${statusText}</td>
-                    <td>
-                        <button class="btn btn-small btn-default" onclick="handleToggleUserStatus(${u.id}, ${u.status === 1 ? 0 : 1})">${toggleText}</button>
-                        <button class="btn btn-small btn-danger" onclick="handleResetPassword(${u.id}, '${u.username}')">重置密码</button>
-                    </td>
+                    <td>${operationHtml}</td>
                 </tr>
             `;
         });

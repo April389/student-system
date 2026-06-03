@@ -568,7 +568,11 @@ a {
 /* 手机适配（屏幕宽度 < 768px） */
 @media screen and (max-width: 768px) {
     .sidebar {
-        display: none;           /* 手机端隐藏侧边栏 */
+        display: flex;             /* 小屏幕也显示侧边栏 */
+        width: 60px;               /* 小屏幕只显示图标 */
+    }
+    .sidebar .menu-item span:last-child {
+        display: none;             /* 小屏幕隐藏文字 */
     }
     .content {
         padding: 16px;
