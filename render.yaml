@@ -1,0 +1,46 @@
+# ========================================
+# Render 部署配置文件 render.yaml
+# 作用：定义 Render 平台上的服务配置
+# ========================================
+#
+# 使用方式：
+#   推送到 GitHub 后，在 Render 上导入此仓库
+#   Render 会自动读取此文件来创建服务
+#
+# 注意：
+#   Render 免费层不包含 MySQL，需要使用外部 MySQL 服务
+#   推荐使用 Aiven (https://aiven.io) 免费 MySQL
+#   或 PlanetScale (https://planetscale.com) 免费 MySQL
+# ========================================
+
+services:
+  - type: web
+    name: student-management-system    # 服务名称（Render 上显示的名字）
+    runtime: python                     # 运行时：Python
+    plan: free                          # 免费计划
+    buildCommand: bash build.sh         # 构建命令：执行 build.sh 安装依赖
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT  # 启动命令
+    envVars:
+      # --- 数据库配置（部署时需要填入实际的 MySQL 连接信息）---
+      - key: DB_HOST
+        sync: false                     # sync: false 表示需要在 Render 控制台手动填写
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: "student_system"
+
+      # --- JWT 配置 ---
+      - key: SECRET_KEY
+        generateValue: true             # 自动生成一个随机密钥
+      - key: ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+
+      # --- 服务器配置 ---
+      - key: APP_HOST
+        value: "0.0.0.0"

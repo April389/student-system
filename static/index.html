@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息管理系统</title>
+    <!-- 引入 CSS 样式文件 -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- ======================================== -->
+    <!-- 第一部分：登录页面 -->
+    <!-- ======================================== -->
+    <!-- HTML 负责页面的骨架和结构 -->
+    <!-- 定义登录表单：输入框、按钮等 -->
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1 class="login-title">学生信息管理系统</h1>
+                <p class="login-subtitle">Student Information Management System</p>
+
+                <!-- 登录表单 -->
+                <form id="login-form" onsubmit="return false;">
+                    <!-- 用户名输入框 -->
+                    <div class="form-group">
+                        <label for="login-username">用户名</label>
+                        <input type="text" id="login-username" placeholder="请输入用户名" required>
+                    </div>
+
+                    <!-- 密码输入框 -->
+                    <div class="form-group">
+                        <label for="login-password">密码</label>
+                        <input type="password" id="login-password" placeholder="请输入密码" required>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button type="button" class="btn btn-primary btn-block" onclick="handleLogin()">
+                        登 录
+                    </button>
+                </form>
+
+                <p class="login-tip">默认管理员账号：admin / 123456</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ======================================== -->
+    <!-- 第二部分：主界面（登录成功后显示） -->
+    <!-- ======================================== -->
+    <div id="main-page" class="page">
+
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="system-title">学生信息管理系统</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">
+                    欢迎，<span id="current-user-name">管理员</span>
+                </span>
+                <button class="btn btn-small btn-danger" onclick="handleLogout()">退出登录</button>
+            </div>
+        </header>
+
+        <!-- 主体内容区域：左侧菜单 + 右侧内容 -->
+        <div class="main-content">
+
+            <!-- 左侧导航菜单 -->
+            <nav class="sidebar">
+                <ul class="menu-list">
+                    <li class="menu-item active" onclick="switchTab('student-list', this)">
+                        <span class="menu-icon">📋</span>
+                        <span>学生列表</span>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('add-student', this)">
+                        <span class="menu-icon">➕</span>
+                        <span>添加学生</span>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('statistics', this)">
+                        <span class="menu-icon">📊</span>
+                        <span>数据统计</span>
+                    </li>
+                    <li class="menu-item" onclick="switchTab('user-manage', this)">
+                        <span class="menu-icon">👤</span>
+                        <span>用户管理</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 右侧内容区域 -->
+            <main class="content">
+
+                <!-- ================================ -->
+                <!-- Tab 1：学生列表 -->
+                <!-- ================================ -->
+                <div id="tab-student-list" class="tab-content active">
+                    <div class="content-header">
+                        <h2>学生列表</h2>
+                        <div class="search-bar">
+                            <input type="text" id="search-keyword" placeholder="搜索姓名/学号/班级..." onkeydown="if(event.key==='Enter') searchStudents()">
+                            <button class="btn btn-primary" onclick="searchStudents()">搜索</button>
+                            <button class="btn btn-default" onclick="resetSearch()">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- 学生数据表格 -->
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>学号</th>
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>年龄</th>
+                                    <th>班级</th>
+                                    <th>专业</th>
+                                    <th>语文</th>
+                                    <th>数学</th>
+                                    <th>英语</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-table-body">
+                                <!-- JavaScript 动态填充 -->
+                                <tr><td colspan="10" class="empty-tip">加载中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页控件 -->
+                    <div class="pagination" id="student-pagination">
+                        <!-- JavaScript 动态生成分页按钮 -->
+                    </div>
+                </div>
+
+                <!-- ================================ -->
+                <!-- Tab 2：添加学生 -->
+                <!-- ================================ -->
+                <div id="tab-add-student" class="tab-content">
+                    <div class="content-header">
+                        <h2>添加新学生</h2>
+                    </div>
+
+                    <form id="add-student-form" class="form-card">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>用户名 <span class="required">*</span></label>
+                                <input type="text" id="add-username" placeholder="登录用户名" required>
+                            </div>
+                            <div class="form-group">
+                                <label>密码 <span class="required">*</span></label>
+                                <input type="password" id="add-password" placeholder="登录密码" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>真实姓名 <span class="required">*</span></label>
+                                <input type="text" id="add-real-name" placeholder="学生姓名" required>
+                            </div>
+                            <div class="form-group">
+                                <label>学号 <span class="required">*</span></label>
+                                <input type="text" id="add-student-no" placeholder="学号" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>性别</label>
+                                <select id="add-gender">
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>年龄</label>
+                                <input type="number" id="add-age" placeholder="年龄" min="1" max="150">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>班级</label>
+                                <input type="text" id="add-class-name" placeholder="如：计算机2301班">
+                            </div>
+                            <div class="form-group">
+                                <label>专业</label>
+                                <input type="text" id="add-major" placeholder="如：计算机科学与技术">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>年级</label>
+                                <input type="text" id="add-grade" placeholder="如：2023级">
+                            </div>
+                            <div class="form-group">
+                                <label>入学日期</label>
+                                <input type="date" id="add-enrollment-date">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>语文成绩</label>
+                                <input type="number" id="add-chinese-score" placeholder="0-100" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>数学成绩</label>
+                                <input type="number" id="add-math-score" placeholder="0-100" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>英语成绩</label>
+                                <input type="number" id="add-english-score" placeholder="0-100" min="0" max="100">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="handleAddStudent()">
+                                添加学生
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="resetAddForm()">
+                                重置表单
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ================================ -->
+                <!-- Tab 3：数据统计 -->
+                <!-- ================================ -->
+                <div id="tab-statistics" class="tab-content">
+                    <div class="content-header">
+                        <h2>数据统计</h2>
+                        <div class="search-bar">
+                            <select id="stats-class-select" onchange="loadClassStatistics()">
+                                <option value="">选择班级查看统计</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 总览统计卡片 -->
+                    <div id="stats-overview" class="stats-grid">
+                        <!-- JavaScript 动态填充 -->
+                    </div>
+
+                    <!-- 班级详细统计 -->
+                    <div id="stats-class-detail" style="display:none;">
+                        <h3 id="stats-class-title"></h3>
+                        <div id="stats-class-info" class="stats-grid"></div>
+                        <div class="table-container">
+                            <h4>班级成绩排名</h4>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>排名</th>
+                                        <th>学号</th>
+                                        <th>姓名</th>
+                                        <th>语文</th>
+                                        <th>数学</th>
+                                        <th>英语</th>
+                                        <th>总分</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stats-ranking-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================================ -->
+                <!-- Tab 4：用户管理 -->
+                <!-- ================================ -->
+                <div id="tab-user-manage" class="tab-content">
+                    <div class="content-header">
+                        <h2>用户管理</h2>
+                        <div class="search-bar">
+                            <input type="text" id="user-search-keyword" placeholder="搜索用户名/姓名...">
+                            <button class="btn btn-primary" onclick="searchUsers()">搜索</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>姓名</th>
+                                    <th>邮箱</th>
+                                    <th>手机</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-table-body">
+                                <tr><td colspan="8" class="empty-tip">加载中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+
+    <!-- ======================================== -->
+    <!-- 第三部分：编辑学生的弹窗（模态框） -->
+    <!-- ======================================== -->
+    <div id="edit-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑学生信息</h3>
+                <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-student-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>真实姓名</label>
+                        <input type="text" id="edit-real-name">
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <select id="edit-gender">
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>年龄</label>
+                        <input type="number" id="edit-age" min="1" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>班级</label>
+                        <input type="text" id="edit-class-name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>专业</label>
+                        <input type="text" id="edit-major">
+                    </div>
+                    <div class="form-group">
+                        <label>年级</label>
+                        <input type="text" id="edit-grade">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>语文成绩</label>
+                        <input type="number" id="edit-chinese-score" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>数学成绩</label>
+                        <input type="number" id="edit-math-score" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>英语成绩</label>
+                        <input type="number" id="edit-english-score" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="handleEditStudent()">保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 JavaScript 文件 -->
+    <!-- Axios CDN（HTTP 请求库，连接前后端） -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 自定义 JS 文件 -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

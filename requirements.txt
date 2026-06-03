@@ -1,0 +1,29 @@
+# ========================================
+# 学生信息管理系统 - Python 依赖清单
+# ========================================
+# Python 版本要求：3.10+（当前环境 Python 3.13.5）
+
+# --- Web 框架 ---
+fastapi>=0.104.1            # FastAPI Web框架，自动生成接口文档
+uvicorn>=0.24.0             # ASGI 服务器，用于运行 FastAPI
+
+# --- JWT 认证 ---
+PyJWT>=2.8.0                # 生成和验证 JWT Token（登录电子通行证）
+
+# --- 密码加密 ---
+"passlib[bcrypt]>=1.7.4"    # 使用 bcrypt 算法加密用户密码，保障安全
+bcrypt==4.0.1               # 必须锁定 4.0.1，与 passlib 兼容
+
+# --- 数据库相关 ---
+SQLAlchemy>=2.0.23          # ORM 对象关系映射库，用 Python 对象代替 SQL 语句
+PyMySQL>=1.1.0              # MySQL 数据库驱动器，连接 Python 与 MySQL
+cryptography>=41.0.7        # PyMySQL SSL 连接所需
+
+# --- 数据校验 ---
+pydantic>=2.5.2             # FastAPI 标配数据校验库，自动检查前端数据格式
+
+# --- 数据统计 ---
+pandas>=2.2.0               # 数据统计、分组排序库，核心语法围绕二维表格
+
+# --- 跨域支持 ---
+# FastAPI 内置 CORSMiddleware，无需额外安装
