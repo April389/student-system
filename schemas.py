@@ -55,8 +55,8 @@ class UserLogin(BaseModel):
     """
     用户登录时，前端需要传过来的数据格式
     """
-    username: str = Field(..., description="用户名")
-    password: str = Field(..., description="密码")
+    username: str = Field(..., min_length=1, max_length=50, description="用户名")
+    password: str = Field(..., min_length=1, max_length=50, description="密码")
 
     class Config:
         json_schema_extra = {
@@ -95,10 +95,10 @@ class StudentCreate(BaseModel):
     """
     添加学生信息时，前端需要传过来的数据格式
     """
-    username: str = Field(..., description="登录用户名")
-    password: str = Field(..., min_length=6, description="登录密码")
-    real_name: str = Field(..., description="学生真实姓名")
-    student_no: str = Field(..., description="学号")
+    username: str = Field(..., min_length=3, max_length=50, description="登录用户名")
+    password: str = Field(..., min_length=6, max_length=50, description="登录密码")
+    real_name: str = Field(..., min_length=1, max_length=50, description="学生真实姓名")
+    student_no: str = Field(..., min_length=1, max_length=30, description="学号")
     gender: Optional[str] = Field(None, description="性别")
     age: Optional[int] = Field(None, ge=1, le=150, description="年龄")
     class_name: Optional[str] = Field(None, description="班级")

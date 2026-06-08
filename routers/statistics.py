@@ -164,18 +164,17 @@ def get_statistics_overview(
     # --- 统计指标三：按班级分组统计人数 ---
     # df.groupby("class_name") 将数据按班级分组
     # .size() 计算每组有多少条记录
+    # 关键修复：groupby 遇到 NaN 班级名会归到 "nan" 组，统计时过滤掉
     class_counts = {}
     if "class_name" in df.columns:
-        grouped = df.groupby("class_name").size()
-        class_counts = grouped.to_dict()
-        # 将 key 中的 NaN 转为字符串
-        class_counts = {str(k): int(v) for k, v in class_counts.items() if str(k) != "nan"}
+        grouped = df.groupby("class_name", dropna=True).size()
+        class_counts = {str(k): int(v) for k, v in grouped.to_dict().items()}
 
     # --- 统计指标四：按性别分组统计 ---
     gender_counts = {}
     if "gender" in df.columns:
-        grouped = df.groupby("gender").size()
-        gender_counts = {str(k): int(v) for k, v in grouped.to_dict().items() if str(k) != "nan"}
+        grouped = df.groupby("gender", dropna=True).size()
+        gender_counts = {str(k): int(v) for k, v in grouped.to_dict().items()}
 
     return {
         "code": 200,
@@ -303,8 +302,11 @@ def get_score_ranking(
     available_cols = [c for c in score_cols if c in df.columns]
 
     # 计算总分
+    # 关键修复：sum(axis=1) 在全 NaN 行会返回 NaN，JSON 无法序列化
+    # 所以使用 skipna=True 跳 NaN，并用 min_count=1 要求至少有 1 个有效值才求和
+    # 这样全 NaN 的行 total_score 仍是 NaN，后续逻辑可以过滤
     if available_cols:
-        df["total_score"] = df[available_cols].sum(axis=1)
+        df["total_score"] = df[available_cols].sum(axis=1, skipna=True, min_count=1)
 
     # 确定排序列
     sort_col_map = {
@@ -318,10 +320,24 @@ def get_score_ranking(
     if sort_col not in df.columns:
         sort_col = "total_score"
 
+    # 过滤掉 total_score 为 NaN 的行（全空成绩的不能参与排名）
+    if sort_col == "total_score":
+        df = df.dropna(subset=["total_score"])
+    else:
+        # 单科排名时也要过滤该科为 NaN 的行
+        df = df.dropna(subset=[sort_col])
+
+    if df.empty:
+        return {"code": 200, "message": "暂无有效数据", "data": []}
+
     # df.sort_values() 按指定列排序
     # ascending=False 表示降序（从大到小）
     ascending = (order == "asc")
     df_sorted = df.sort_values(sort_col, ascending=ascending).head(limit)
+
+    # 关键修复：iterrows() 会保留 NaN 为 numpy.nan(float)，json.dumps 不接受 NaN
+    # 在转 dict 前将所有 NaN 统一转为 None
+    df_sorted = df_sorted.astype(object).where(pd.notnull(df_sorted), None)
 
     # 组装排名数据
     ranking = []
@@ -330,11 +346,11 @@ def get_score_ranking(
             "rank": i,
             "student_no": row.get("student_no", ""),
             "real_name": row.get("real_name", ""),
-            "class_name": row.get("class_name", ""),
-            "chinese_score": int(row.get("chinese_score", 0)) if pd.notna(row.get("chinese_score")) else None,
-            "math_score": int(row.get("math_score", 0)) if pd.notna(row.get("math_score")) else None,
-            "english_score": int(row.get("english_score", 0)) if pd.notna(row.get("english_score")) else None,
-            "total_score": int(row.get("total_score", 0)) if "total_score" in row.index else None,
+            "class_name": row.get("class_name", "") or "",
+            "chinese_score": int(row.get("chinese_score", 0)) if row.get("chinese_score") is not None else None,
+            "math_score": int(row.get("math_score", 0)) if row.get("math_score") is not None else None,
+            "english_score": int(row.get("english_score", 0)) if row.get("english_score") is not None else None,
+            "total_score": int(row.get("total_score", 0)) if row.get("total_score") is not None else None,
         })
 
     return {

@@ -167,7 +167,7 @@ class StudentInfo(Base):
     # --- 字段定义 ---
     id = Column(Integer, primary_key=True, autoincrement=True, comment="记录ID，自增主键")
     user_id = Column(Integer, ForeignKey("sys_user.id"), unique=True, nullable=False, comment="关联用户ID")
-    student_no = Column(String(20), unique=True, nullable=False, comment="学号，唯一")
+    student_no = Column(String(30), unique=True, nullable=False, comment="学号，唯一")
     gender = Column(String(10), nullable=True, comment="性别：男/女")
     age = Column(Integer, nullable=True, comment="年龄")
     class_name = Column(String(50), nullable=True, comment="班级名称，如：计算机2301班")

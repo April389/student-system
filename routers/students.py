@@ -26,6 +26,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 from typing import Optional
 from database import get_db
 from models import SysUser, SysUserRole, SysRole, StudentInfo
@@ -244,7 +245,14 @@ def create_student(
         real_name=student_data.real_name,
     )
     db.add(new_user)
-    db.flush()  # flush 会执行 SQL 但不提交事务，这样可以获取自增的 id
+    try:
+        db.flush()  # flush 会执行 SQL 但不提交事务，这样可以获取自增的 id
+    except IntegrityError as e:
+        db.rollback()
+        err_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+        if 'username' in err_msg.lower():
+            raise HTTPException(status_code=400, detail="用户名已存在（并发冲突）")
+        raise HTTPException(status_code=400, detail=f"数据重复: {err_msg[:100]}")
 
     # 第四步：创建学生详细信息
     new_student = StudentInfo(
@@ -269,7 +277,17 @@ def create_student(
         db.add(user_role)
 
     # 第六步：提交事务（一次性写入所有数据）
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        # 捕获数据库唯一性约束错误（并发场景下可能发生）
+        err_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+        if 'username' in err_msg.lower():
+            raise HTTPException(status_code=400, detail="用户名已存在（并发冲突）")
+        if 'student_no' in err_msg.lower():
+            raise HTTPException(status_code=400, detail="学号已存在（并发冲突）")
+        raise HTTPException(status_code=400, detail=f"数据重复: {err_msg[:100]}")
     db.refresh(new_student)
 
     return {
