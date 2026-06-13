@@ -1,0 +1,8 @@
+{
+  "name": "student-system-static",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Student system static frontend",
+  "scripts": {},
+  "dependencies": {}
+}
