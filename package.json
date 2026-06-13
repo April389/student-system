@@ -1,0 +1,12 @@
+{
+  "name": "student-system-frontend",
+  "version": "1.0.0",
+  "description": "学生管理系统前端 - 静态文件",
+  "private": true,
+  "scripts": {
+    "build": "echo '开始复制 static 到 dist' && mkdir -p dist && cp -r static/. dist/ && echo '构建完成'"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
