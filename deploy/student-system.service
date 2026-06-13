@@ -1,0 +1,37 @@
+# ========================================
+# systemd 守护配置 - 学生信息管理系统
+# 路径：/etc/systemd/system/student-system.service
+# ========================================
+# 注意：deploy_aliyun.sh 会自动生成这个文件
+# 这里仅作为备份参考，部署时不需要手动复制
+# ========================================
+
+[Unit]
+Description=Student Management System (FastAPI)
+Documentation=https://github.com/April389/student-system
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=student
+Group=student
+WorkingDirectory=/home/student/app
+Environment="PATH=/home/student/app/venv/bin:/usr/bin"
+EnvironmentFile=/home/student/app/.env
+ExecStart=/home/student/app/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1
+Restart=always
+RestartSec=5
+StartLimitBurst=3
+StartLimitIntervalSec=60
+
+# 日志输出（按天轮转由 logrotate 处理）
+StandardOutput=append:/var/log/student-system/access.log
+StandardError=append:/var/log/student-system/error.log
+
+# 安全加固
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
