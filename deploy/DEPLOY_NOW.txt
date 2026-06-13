@@ -1,0 +1,8 @@
+# 复制下面的命令，**整段**粘贴到 PowerShell（不是 SSH 后），然后按回车
+# 中间会提示输入密码，输入 Wang061110_ 后回车
+
+# =============== 复制下面这一整段 ===============
+
+ssh root@120.27.17.52 "curl -fsSL https://raw.githubusercontent.com/April389/student-system/main/deploy/deploy_aliyun.sh -o /root/deploy.sh && chmod +x /root/deploy.sh && bash /root/deploy.sh 2>&1 | tee /root/deploy.log"
+
+# =============== 复制上面这一整段 ===============
