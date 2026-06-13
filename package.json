@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "description": "Student system static frontend",
-  "scripts": {},
+  "scripts": {
+    "build": "echo 'Static project, no build needed'"
+  },
   "dependencies": {}
 }
