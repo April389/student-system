@@ -1,0 +1,74 @@
+# ========================================
+# Docker 构建时排除文件
+# 目的：减小镜像体积，避免把本地开发文件、测试数据、截图等打进去
+# ========================================
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# 部署配置（不需要打到后端镜像里）
+render.yaml
+build.sh
+Procfile
+fly.toml
+.dockerignore
+Dockerfile
+.dockerignore
+
+# 文档
+*.md
+README.md
+
+# 测试文件
+test_*.py
+*_test.py
+cleanup_test_data.py
+test_output.log
+test_*.log
+
+# 截图和图片
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.svg
+*.ico
+browser_*.png
+after_*.png
+main_*.png
+login_*.png
+layout_*.png
+render_*.png
+github_*.png
+
+# 前端依赖（Cloudflare Pages 会单独处理）
+node_modules/
+
+# 临时文件
+*.tmp
+*.bak
+*.log

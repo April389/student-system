@@ -28,12 +28,28 @@
 // ========================================
 // axios.create() 创建一个自定义的 Axios 实例
 // 可以设置统一的配置（如基础 URL、超时时间等）
+
+// 后端地址优先级（由高到低）：
+//   1. window.API_BASE_URL    —— 运行时注入（Cloudflare Pages 可在 index.html 里动态设）
+//   2. localStorage('api_base_url')  —— 用户在浏览器里手改
+//   3. 相对路径 ''     —— 同域部署（后端和前端一个域名）
+const _apiBaseURL = (function () {
+    if (typeof window !== 'undefined' && window.API_BASE_URL) {
+        return window.API_BASE_URL.replace(/\/+$/, '');  // 去掉末尾斜杠
+    }
+    try {
+        const stored = localStorage.getItem('api_base_url');
+        if (stored) return stored.replace(/\/+$/, '');
+    } catch (e) { /* localStorage 不可用时忽略 */ }
+    return '';  // 默认同域部署
+})();
+
 const api = axios.create({
-    // baseURL: 使用空字符串表示相对路径
-    // 本地和云端都会自动使用当前域名
-    // 例如本地: http://127.0.0.1:8000/api/auth/login
-    //      云端: https://xxx.onrender.com/api/auth/login
-    baseURL: '',
+    // baseURL: 后端 API 的根地址
+    //   本地同域：http://127.0.0.1:8000
+    //   独立部署：window.API_BASE_URL = "https://student-system.fly.dev"
+    //   Cloudflare Pages + fly.io 独立部署场景下，通过 index.html 里的 <script> 注入
+    baseURL: _apiBaseURL,
 
     // timeout: 请求超时时间（毫秒）
     // 超过 10 秒没响应就视为请求失败

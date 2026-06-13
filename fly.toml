@@ -1,0 +1,55 @@
+# ========================================
+# fly.io 部署配置文件 fly.toml
+# 作用：定义 fly.io 平台上的 App 配置
+# ========================================
+#
+# 使用方式：
+#   1. 安装 flyctl: https://fly.io/docs/hands-on/install-flyctl/
+#   2. 登录: fly auth login
+#   3. 在项目根目录执行: fly launch --no-deploy
+#      （首次会创建 fly.toml 和 .fly/，因为我们这里提供了 fly.toml 跳过 --no-deploy）
+#   4. 设置环境变量:
+#      fly secrets set DB_HOST=xxx DB_USER=xxx DB_PASSWORD=xxx ...
+#   5. 部署: fly deploy
+#
+# 备注：
+#   - fly.io 免费层每月赠送 $5 信用额度，足够 1 个 shared-cpu-1x 256MB 容器 24×7 运行
+#   - 不会绑卡
+#   - 详见: https://fly.io/docs/about/pricing/
+
+app = "student-system-backend"   # App 名称（必须小写、连字符、唯一）
+primary_region = "sin"            # 主区域：新加坡（亚洲延迟低）
+                                # 可选: sin (Singapore), hkg (Hong Kong), nrt (Tokyo)
+                                #      sjc (San Jose), lax (Los Angeles), iad (Virginia)
+
+[build]
+  dockerfile = "Dockerfile"       # 用当前目录的 Dockerfile 构建
+
+[env]                            # 普通环境变量（不敏感）
+  APP_HOST = "0.0.0.0"
+  ACCESS_TOKEN_EXPIRE_MINUTES = "60"
+  ALGORITHM = "HS256"
+  DB_PORT = "3306"
+  DB_NAME = "student_system"
+
+# 注意：以下敏感变量需用 `fly secrets set` 命令单独设置
+#   DB_HOST, DB_USER, DB_PASSWORD, SECRET_KEY
+
+[http_service]
+  internal_port = 8080            # 容器内端口（与 Dockerfile EXPOSE 一致）
+  force_https = true             # 强制 HTTPS
+  auto_stop_machines = "stop"    # 空闲时自动停止（节省资源，但冷启动慢）
+  auto_start_machines = true     # 有请求时自动启动
+  min_machines_running = 0       # 空闲时 0 个机器运行（最省，免费层推荐）
+
+  [[http_service.checks]]
+    interval = "30s"              # 每 30 秒检查一次
+    timeout = "5s"                # 5 秒内没响应视为不健康
+    grace_period = "10s"          # 启动后给 10 秒缓冲
+    method = "GET"
+    path = "/docs"                # 检查 FastAPI 文档页（不会返回 500）
+
+[[vm]]
+  cpu_kind = "shared"            # shared-cpu 免费
+  cpus = 1                       # 1 个 CPU
+  memory_mb = 256                # 256MB 内存（最小免费规格）

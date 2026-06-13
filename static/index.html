@@ -6,6 +6,38 @@
     <title>学生信息管理系统</title>
     <!-- 引入 CSS 样式文件 -->
     <link rel="stylesheet" href="/static/css/style.css">
+    <!--
+        运行时配置后端 API 地址（独立部署场景）
+        ===========================================
+        优先级（从高到低）：
+          1. URL 参数 ?api_base_url=https://xxx.fly.dev
+          2. localStorage('api_base_url')    （浏览器开发者工具手动设置后生效）
+          3. window.API_BASE_URL              （打包时静态注入，部署前改这里）
+          4. 相对路径 ''                       （同域部署默认）
+        注意：必须放在 api.js 之前
+    -->
+    <script>
+        (function () {
+            try {
+                // 1) URL 参数注入（方便临时改地址）
+                const params = new URLSearchParams(location.search);
+                const fromQuery = params.get('api_base_url');
+                if (fromQuery) {
+                    localStorage.setItem('api_base_url', fromQuery);
+                    window.API_BASE_URL = fromQuery.replace(/\/+$/, '');
+                    return;
+                }
+                // 2) localStorage 读取
+                const stored = localStorage.getItem('api_base_url');
+                if (stored) {
+                    window.API_BASE_URL = stored.replace(/\/+$/, '');
+                }
+                // 3) window.API_BASE_URL 已经在打包时设置过则继续生效
+            } catch (e) {
+                console.warn('API base URL init failed:', e);
+            }
+        })();
+    </script>
 </head>
 <body>
 
