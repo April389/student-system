@@ -1,10 +1,10 @@
 {
   "name": "student-system-frontend",
   "version": "1.0.0",
-  "description": "学生管理系统前端 - 静态文件",
+  "description": "Student management system frontend - static files",
   "private": true,
   "scripts": {
-    "build": "node build.js"
+    "build": "echo 'No build needed - dist already committed to repo'"
   },
   "engines": {
     "node": ">=14"

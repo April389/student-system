@@ -11,7 +11,7 @@ uvicorn>=0.24.0             # ASGI 服务器，用于运行 FastAPI
 PyJWT>=2.8.0                # 生成和验证 JWT Token（登录电子通行证）
 
 # --- 密码加密 ---
-"passlib[bcrypt]>=1.7.4"    # 使用 bcrypt 算法加密用户密码，保障安全
+passlib[bcrypt]>=1.7.4        # 使用 bcrypt 算法加密用户密码（extras 语法不需要引号）
 bcrypt==4.0.1               # 必须锁定 4.0.1，与 passlib 兼容
 
 # --- 数据库相关 ---
