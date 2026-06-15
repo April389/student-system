@@ -3,7 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.egg-info/
-dist/
+dist/  # 注释掉，让 git 跟踪 dist 目录（EdgeOne Pages 直接读 dist）
+#dist/
 build/
 *.egg
 
