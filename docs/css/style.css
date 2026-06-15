@@ -1,0 +1,600 @@
+/* ========================================
+   CSS 样式文件 style.css
+   作用：负责页面的颜值和布局
+   ========================================
+
+   CSS（层叠样式表）说明：
+     - 负责设置字体、颜色、间距
+     - 实现响应式设计（让系统在手机、平板、电脑上都能展示）
+     - 通过媒体查询（@media）实现不同屏幕尺寸下的适配
+   ======================================== */
+
+
+/* ========================================
+   第一部分：全局基础样式
+   ======================================== */
+/* * 通配符选择器，应用到所有元素 */
+* {
+    margin: 0;                /* 清除默认外边距 */
+    padding: 0;               /* 清除默认内边距 */
+    box-sizing: border-box;   /* 边框计算方式：border 包含在 width 内 */
+}
+
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    color: #333;              /* 默认文字颜色 */
+    background-color: #f0f2f5; /* 页面背景色 */
+    line-height: 1.6;         /* 行间距 */
+}
+
+a {
+    text-decoration: none;    /* 去除链接下划线 */
+    color: inherit;
+}
+
+/* 页面切换控制 */
+.page {
+    display: none;            /* 默认隐藏 */
+}
+.page.active {
+    display: block;           /* 激活的页面显示 */
+}
+
+
+/* ========================================
+   第二部分：登录页面样式
+   ======================================== */
+.login-container {
+    min-height: 100vh;                            /* 最小高度占满整个视口 */
+    display: flex;                                 /* 弹性布局 */
+    justify-content: center;                       /* 水平居中 */
+    align-items: center;                           /* 垂直居中 */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 渐变背景 */
+}
+
+.login-box {
+    background: #fff;                              /* 白色背景 */
+    padding: 40px;                                 /* 内边距 */
+    border-radius: 12px;                           /* 圆角 */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);   /* 阴影效果 */
+    width: 400px;                                  /* 宽度 */
+    max-width: 90%;                                /* 最大宽度（响应式） */
+}
+
+.login-title {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 30px;
+}
+
+.login-tip {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+
+/* ========================================
+   第三部分：表单元素样式
+   ======================================== */
+.form-group {
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.form-group label {
+    display: block;             /* 标签独占一行 */
+    margin-bottom: 6px;
+    font-weight: 500;           /* 字体加粗 */
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d9d9d9;  /* 边框颜色 */
+    border-radius: 6px;         /* 圆角 */
+    font-size: 14px;
+    transition: border-color 0.3s; /* 边框颜色过渡动画 */
+    outline: none;              /* 去除默认焦点轮廓 */
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #667eea;      /* 聚焦时边框变色 */
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2); /* 聚焦阴影 */
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;                  /* 列间距 */
+}
+
+.required {
+    color: #e74c3c;             /* 必填标记为红色 */
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+
+/* ========================================
+   第四部分：按钮样式
+   ======================================== */
+.btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;            /* 鼠标悬停变手型 */
+    transition: all 0.3s;       /* 过渡动画 */
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;               /* 悬停时稍微透明 */
+    transform: translateY(-1px); /* 悬停时微微上浮 */
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-default {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #d9d9d9;
+}
+
+.btn-default:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-block {
+    width: 100%;                /* 占满容器宽度 */
+}
+
+.btn-small {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+/* 操作按钮（表格内） */
+.btn-edit {
+    background: #3498db;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   第五部分：主界面布局（顶部导航 + 侧边栏 + 内容区）
+   ======================================== */
+
+/* --- 顶部导航栏 --- */
+.header {
+    display: flex;
+    justify-content: space-between;  /* 两端对齐 */
+    align-items: center;
+    padding: 0 24px;
+    height: 60px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;            /* 固定在顶部 */
+    top: 0;
+    z-index: 100;
+}
+
+.system-title {
+    font-size: 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-info {
+    color: #666;
+    font-size: 14px;
+}
+
+/* --- 主体区域（侧边栏 + 内容区） --- */
+.main-content {
+    display: flex;
+    min-height: calc(100vh - 60px); /* 减去顶部导航高度 */
+}
+
+/* --- 左侧导航菜单 --- */
+.sidebar {
+    width: 200px;
+    background: #fff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    padding-top: 16px;
+}
+
+.menu-list {
+    list-style: none;           /* 去除列表默认样式 */
+}
+
+.menu-item {
+    padding: 14px 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    font-size: 14px;
+}
+
+.menu-item:hover {
+    background: #f0f2ff;
+    color: #667eea;
+}
+
+.menu-item.active {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.menu-icon {
+    font-size: 18px;
+}
+
+/* --- 右侧内容区 --- */
+.content {
+    flex: 1;                    /* 占满剩余空间 */
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* Tab 内容切换 */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.content-header h2 {
+    font-size: 22px;
+    color: #333;
+}
+
+/* 搜索栏 */
+.search-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.search-bar input,
+.search-bar select {
+    padding: 8px 14px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    min-width: 200px;
+}
+
+.search-bar input:focus,
+.search-bar select:focus {
+    border-color: #667eea;
+}
+
+
+/* ========================================
+   第六部分：数据表格样式
+   ======================================== */
+.table-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;           /* 水平滚动（响应式） */
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;  /* 合并边框 */
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;        /* 不换行 */
+}
+
+.data-table tbody tr:hover {
+    background: #f5f7ff;        /* 鼠标悬停行变色 */
+}
+
+.empty-tip {
+    color: #999;
+    padding: 40px !important;
+}
+
+
+/* ========================================
+   第七部分：分页控件样式
+   ======================================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+}
+
+.pagination button {
+    padding: 6px 14px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pagination button:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.pagination button.active {
+    background: #667eea;
+    color: #fff;
+    border-color: #667eea;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    color: #999;
+    font-size: 13px;
+    margin: 0 10px;
+}
+
+
+/* ========================================
+   第八部分：统计卡片样式
+   ======================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 自适应列数 */
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.stat-card .stat-label {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-card .stat-sub {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+
+/* ========================================
+   第九部分：表单卡片样式（添加学生表单）
+   ======================================== */
+.form-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    max-width: 800px;
+}
+
+
+/* ========================================
+   第十部分：模态框（弹窗）样式
+   ======================================== */
+.modal {
+    position: fixed;             /* 固定定位，覆盖整个屏幕 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 半透明遮罩 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    width: 600px;
+    max-width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+
+/* ========================================
+   第十一部分：提示信息样式
+   ======================================== */
+.toast {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 2000;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast-success {
+    background: #52c41a;        /* 绿色：成功 */
+}
+
+.toast-error {
+    background: #e74c3c;        /* 红色：错误 */
+}
+
+.toast-info {
+    background: #3498db;        /* 蓝色：信息 */
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+
+/* ========================================
+   第十二部分：响应式设计（适配手机、平板、电脑）
+   ======================================== */
+/* 平板适配（屏幕宽度 < 1024px） */
+@media screen and (max-width: 1024px) {
+    .sidebar {
+        width: 160px;
+    }
+    .form-row {
+        flex-direction: column;  /* 表单单列布局 */
+    }
+}
+
+/* 手机适配（屏幕宽度 < 768px） */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        display: flex;             /* 小屏幕也显示侧边栏 */
+        width: 60px;               /* 小屏幕只显示图标 */
+    }
+    .sidebar .menu-item span:last-child {
+        display: none;             /* 小屏幕隐藏文字 */
+    }
+    .content {
+        padding: 16px;
+    }
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .search-bar {
+        flex-wrap: wrap;
+    }
+    .form-row {
+        flex-direction: column;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr 1fr; /* 两列布局 */
+    }
+    .header {
+        padding: 0 12px;
+    }
+    .login-box {
+        padding: 30px 20px;
+    }
+}
